@@ -2,7 +2,13 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ToDoList Pro</title>
+    <title>Ma ToDoList</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 16px; }
+        li { margin-bottom: 10px; }
+        input[type="text"] { padding: 4px 8px; }
+        button { padding: 4px 10px; cursor: pointer; }
+    </style>
 </head>
 <body>
     <h1>Ma ToDoList</h1>
@@ -15,6 +21,7 @@
     </form>
 
     <hr>
+       <p>Tâches restantes : {{ $tasks->where('is_completed', false)->count() }}</p>
 
     <!-- Liste des tâches -->
     <ul>
@@ -23,6 +30,13 @@
                 <span style="{{ $task->is_completed ? 'text-decoration: line-through;' : '' }}">
                     {{ $task->title }}
                 </span>
+                 <!-- Renommer -->
+                         <form action="{{ route('tasks.update', $task) }}" method="POST" style="display:inline;">
+                                  @csrf
+                                    @method('PUT')
+                                  <input type="text" name="title" value="{{ $task->title }}" required>
+                                     <button type="submit">Renommer</button>
+                                   </form>
 
                 <!-- Cocher / Décocher -->
                 <form action="{{ route('tasks.update', $task) }}" method="POST" style="display:inline;">

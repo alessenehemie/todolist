@@ -13,3 +13,12 @@ Application de gestion de tâches simple développée avec Laravel (architecture
    - `User` : relation `hasMany(Task::class)`.
 6. **Routes** : déclaration de `Route::resource('tasks', TaskController::class);` dans `routes/web.php`.
 7. **Contrôleur & Vue** : implémentation du CRUD dans `TaskController` (`index`, `store`, `update`, `destroy`) et création de la vue `resources/views/tasks/index.blade.php`.
+## Prochaines étapes prévues
+
+1. **Modification du titre (`edit` + `update`)** : ajouter un formulaire simple pour renommer une tâche existante en plus du basculement de `is_completed`.
+2. **Compteur et style** : afficher le nombre de tâches restantes et ajouter un style CSS léger pour améliorer la lisibilité.
+3. **Sauvegarde GitHub** : versionner les avancées avec :
+   ```bash
+   git add .
+   git commit -m "Test CRUD et vue index opérationnels"
+   git push 

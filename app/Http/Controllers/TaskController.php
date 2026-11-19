@@ -25,15 +25,24 @@ class TaskController extends Controller
         return back();
     }
 
-    public function update(Task $task)
-    {
+   public function update(Request $request, Task $task)
+{
+    if ($request->has('title')) {
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $task->update([
+            'title' => $request->title,
+        ]);
+    } else {
         $task->update([
             'is_completed' => ! $task->is_completed,
         ]);
-
-        return back();
     }
 
+    return back();
+}
     public function destroy(Task $task)
     {
         $task->delete();
