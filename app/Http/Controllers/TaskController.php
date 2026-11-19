@@ -6,13 +6,22 @@ use App\Models\Task;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
+{public function index(Request $request)
 {
-    public function index()
-    {
-        $tasks = Task::all();
-        return view('tasks.index', compact('tasks'));
+    $filter = $request->query('filter', 'all');
+
+    $query = Task::latest();
+
+    if ($filter === 'active') {
+        $query->where('is_completed', false);
+    } elseif ($filter === 'completed') {
+        $query->where('is_completed', true);
     }
 
+    $tasks = $query->get();
+
+    return view('tasks.index', compact('tasks', 'filter'));
+}
     public function store(Request $request)
     {
         $request->validate(['title' => 'required']);
