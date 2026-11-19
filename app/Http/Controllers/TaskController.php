@@ -6,56 +6,58 @@ use App\Models\Task;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
-{public function index(Request $request)
 {
-    $filter = $request->query('filter', 'all');
+    public function index()
+    {
+        $tasks = Task::where('user_id', auth()->id())->latest()->get();
 
-    $query = Task::latest();
-
-    if ($filter === 'active') {
-        $query->where('is_completed', false);
-    } elseif ($filter === 'completed') {
-        $query->where('is_completed', true);
+        return view('tasks.index', compact('tasks'));
     }
 
-    $tasks = $query->get();
-
-    return view('tasks.index', compact('tasks', 'filter'));
-}
     public function store(Request $request)
     {
-        $request->validate(['title' => 'required']);
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+        ]);
 
         Task::create([
-            'user_id' => 1,
-            'title' => $request->title,
+            'user_id' => auth()->id(),
+            'title' => $validated['title'],
+            'is_completed' => false,
         ]);
 
-        return back();
+        return redirect()->route('tasks.index')->with('success', 'Tâche ajoutée.');
     }
 
-   public function update(Request $request, Task $task)
-{
-    if ($request->has('title')) {
-        $request->validate([
-            'title' => 'required|string|max:255',
+    public function update(Request $request, Task $task)
+    {
+        abort_if($task->user_id !== auth()->id(), 403);
+
+        if ($request->has('toggle_completed')) {
+            $task->update([
+                'is_completed' => ! $task->is_completed,
+            ]);
+
+            return redirect()->back();
+        }
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
         ]);
 
         $task->update([
-            'title' => $request->title,
+            'title' => $validated['title'],
         ]);
-    } else {
-        $task->update([
-            'is_completed' => ! $task->is_completed,
-        ]);
+
+        return redirect()->route('tasks.index')->with('success', 'Tâche mise à jour.');
     }
 
-    return back();
-}
     public function destroy(Task $task)
     {
+        abort_if($task->user_id !== auth()->id(), 403);
+
         $task->delete();
 
-        return back();
+        return redirect()->route('tasks.index')->with('success', 'Tâche supprimée.');
     }
 }

@@ -224,6 +224,14 @@
     </style>
 </head>
 <body>
+    <div>
+    <span>Connecté en tant que : <strong>{{ auth()->user()->name }}</strong></span>
+
+    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+        @csrf
+        <button type="submit">Déconnexion</button>
+    </form>
+</div>
     <div class="notebook">
         <h1>Ma ToDoList</h1>
 
